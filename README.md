@@ -10,25 +10,6 @@ I started working on this bot in December 2023, I added all the necessary featur
 
 Below I'll leave some images and videos of how it worked, prints of the bot's UI, and how to install and run it.
 
-## 🎉 🚀 We are thrilled to officially announce PILOTNG REBORN! 🤖✨
-
-![Reborn](docs/assets/images/reborn.png)
-
-After nearly 6 months of intensive testing 🧪 with zero bans 🚫, we are ready to bring to the public a private bot that takes security to the next level.
-💎 Our biggest competitive advantage: security and reliability above all else.
-
-🔥 We have refined the single-targeting system and low-level mechanics, ensuring top performance in any situation.
-
-🎯 Initial focus: Tibia Global
-🛠️ Future plans: Support for OT-Servers
-
-📜 Fully optimized scripts for the main farming hunts, ready to maximize your results.
-⚡ Extremely easy to use: plug-and-play, with clear tutorials and 24/7 support, so any player can set it up and run in just minutes.
-
-💡 Coming soon – we are still in the final testing phase to guarantee maximum stability and efficiency before the official launch.
-
-Join on our Discord: https://discord.gg/QNnzDUnebw
-
 ## 📷 Gallery
 
 ![UI](docs/assets/images/ui.png)
