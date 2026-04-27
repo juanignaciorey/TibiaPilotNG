@@ -2,7 +2,7 @@ import serial
 from time import sleep
 import base64
 
-arduinoSerial = serial.Serial('COM33', 115200, timeout=1)
+arduinoSerial = serial.Serial('COM3', 115200, timeout=1)
 
 def sendCommandArduino(command):
     commandBytes = command.encode('utf-8')
