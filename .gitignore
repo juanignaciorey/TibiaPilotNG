@@ -29,3 +29,6 @@ var/
 venv
 .venv
 .venv*/
+
+# User data
+game_profiles.json

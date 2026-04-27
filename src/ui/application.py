@@ -1,3 +1,4 @@
+import sys
 import customtkinter
 from tkinter import BooleanVar
 from .pages.config import ConfigPage
@@ -5,6 +6,7 @@ from .pages.comboSpells import ComboSpellsPage
 from .pages.inventory import InventoryPage
 from .pages.cavebot.cavebotPage import CavebotPage
 from .pages.healing.healingPage import HealingPage
+from .pages.scannerPage import ScannerPage
 from .utils import genRanStr
 
 class Application(customtkinter.CTk):
@@ -22,6 +24,7 @@ class Application(customtkinter.CTk):
         self.cavebotPage = None
         self.healingPage = None
         self.comboPage = None
+        self.scannerPage = None
         self.canvasWindow = None
 
         configurationBtn = customtkinter.CTkButton(self, text="Configuration", corner_radius=32,
@@ -54,11 +57,19 @@ class Application(customtkinter.CTk):
                                         command=self.comboWindow)
         comboBtn.grid(row=1, column=1, padx=20, pady=20)
 
+        scannerBtn = customtkinter.CTkButton(self, text="Scanner", corner_radius=32,
+                                        fg_color="transparent", border_color="#C20034",
+                                        border_width=2, hover_color="#C20034",
+                                        command=self.scannerWindow)
+        scannerBtn.grid(row=1, column=2, padx=20, pady=20)
+
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+
         self.enabledVar = BooleanVar()
         self.checkbutton = customtkinter.CTkCheckBox(
             self, text='Enabled', variable=self.enabledVar, command=self.onToggleEnabledButton,
             hover_color="#870125", fg_color='#C20034')
-        self.checkbutton.grid(column=2, row=1, padx=20, pady=20, sticky='w')
+        self.checkbutton.grid(column=3, row=1, padx=20, pady=20, sticky='w')
 
     def configurationWindow(self):
         if self.configPage is None or not self.configPage.winfo_exists():
@@ -89,6 +100,16 @@ class Application(customtkinter.CTk):
             self.comboPage = ComboSpellsPage(self.context)
         else:
             self.comboPage.focus()
+
+    def scannerWindow(self):
+        if self.scannerPage is None or not self.scannerPage.winfo_exists():
+            self.scannerPage = ScannerPage(self.context)
+        else:
+            self.scannerPage.focus()
+
+    def _on_close(self):
+        import os
+        os._exit(0)
 
     def onToggleEnabledButton(self):
         varStatus = self.enabledVar.get()

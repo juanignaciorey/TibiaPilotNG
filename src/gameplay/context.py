@@ -2,6 +2,11 @@ from src.gameplay.core.tasks.orchestrator import TasksOrchestrator
 
 
 context = {
+    'memory_profile': {
+        'game': None,         # Active profile name — matches a key in game_profiles.json
+        'attached_pid': None, # PID currently attached for memory reading
+    },
+    'input_driver': 'pyautogui',  # 'pyautogui' | 'sendinput' | 'arduino'
     'ng_backpacks': {
         'main': '',
         'loot': '',

@@ -1,30 +1,28 @@
-import pyautogui
 from src.shared.typings import XYCoordinate
-from .ino import sendCommandArduino
+from .input_manager import input_manager
+
 
 def drag(x1y1: XYCoordinate, x2y2: XYCoordinate):
-    sendCommandArduino(f"moveTo,{int(x1y1[0])},{int(x1y1[1])}")
-    sendCommandArduino("dragStart")
-    sendCommandArduino(f"moveTo,{int(x2y2[0])},{int(x2y2[1])}")
-    sendCommandArduino("dragEnd")
+    input_manager.drag(int(x1y1[0]), int(x1y1[1]), int(x2y2[0]), int(x2y2[1]))
+
 
 def leftClick(windowCoordinate: XYCoordinate = None):
     if windowCoordinate is None:
-        sendCommandArduino("leftClick")
-        return
-    sendCommandArduino(f"moveTo,{int(windowCoordinate[0])},{int(windowCoordinate[1])}")
-    sendCommandArduino("leftClick")
+        input_manager.left_click()
+    else:
+        input_manager.left_click(int(windowCoordinate[0]), int(windowCoordinate[1]))
+
 
 def moveTo(windowCoordinate: XYCoordinate):
-    sendCommandArduino(f"moveTo,{int(windowCoordinate[0])},{int(windowCoordinate[1])}")
+    input_manager.move_to(int(windowCoordinate[0]), int(windowCoordinate[1]))
+
 
 def rightClick(windowCoordinate: XYCoordinate = None):
     if windowCoordinate is None:
-        sendCommandArduino("rightClick")
-        return
-    sendCommandArduino(f"moveTo,{int(windowCoordinate[0])},{int(windowCoordinate[1])}")
-    sendCommandArduino("rightClick")
+        input_manager.right_click()
+    else:
+        input_manager.right_click(int(windowCoordinate[0]), int(windowCoordinate[1]))
+
 
 def scroll(clicks: int):
-    curX, curY = pyautogui.position()
-    sendCommandArduino(f"scroll,{curX}, {curY}, {clicks}")
+    input_manager.scroll(clicks)
