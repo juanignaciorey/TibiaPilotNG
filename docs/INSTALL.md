@@ -15,7 +15,7 @@
 ### Hardware
 
 - **Arduino Leonardo** (obligatorio) — conectado a **COM33** a **115200 baud**
-- Resolución de pantalla: **1920×1080** (hardcoded, no cambia)
+- Resolución de pantalla: **1280×720** o **1920×1080** (autodetectado)
 
 ---
 
@@ -109,13 +109,64 @@ Esto instala todas las dependencias listadas en `pyproject.toml` en un virtualen
 
 ---
 
+## Solución de problemas — OpenCV (`ImportError: DLL load failed while importing cv2`)
+
+Si al ejecutar `import cv2` ves `No se puede encontrar el módulo especificado`, en Windows suele faltar `MFPlat.DLL` (componente multimedia del sistema).
+
+### 1) Ejecutar PowerShell como Administrador
+
+`Get-WindowsCapability` y `Add-WindowsCapability` requieren elevación. Si no abrís la consola como admin, vas a ver:
+
+`La operación solicitada requiere elevación.`
+
+### 2) Verificar e instalar Media Feature Pack
+
+En **PowerShell (Administrador)**:
+
+```powershell
+Get-WindowsCapability -Online | Where-Object Name -like "*Media*" | Select-Object Name,State
+Add-WindowsCapability -Online -Name Media.MediaFeaturePack~~~~0.0.1.0
+```
+
+Si el paquete no aparece por nombre, instalalo desde:
+- `Configuración` -> `Aplicaciones` -> `Características opcionales` -> `Agregar una característica` -> **Media Feature Pack**
+
+### 3) Reiniciar Windows
+
+El reinicio es necesario para que el DLL quede disponible globalmente.
+
+### 4) Validar OpenCV en el virtualenv
+
+```powershell
+.\.venv311\Scripts\python.exe -c "import cv2; print(cv2.__version__)"
+```
+
+Si sigue fallando, verificá manualmente la existencia de:
+- `C:\Windows\System32\mfplat.dll`
+
+---
+
 ## Paso 5 — Flashear el Arduino Leonardo
+
+### Bibliotecas de Arduino (obligatorio antes de compilar)
+
+El sketch `arduino/arduino.ino` **no** trae las dependencias en el repo: hay que instalarlas con el **Gestor de bibliotecas** del Arduino IDE (**Sketch → Incluir biblioteca → Administrar bibliotecas…**, o el icono de bibliotecas en la barra lateral del IDE 2).
+
+| Biblioteca | En el gestor | Notas |
+|---|---|---|
+| **ArduinoJson** | *ArduinoJson* — autor **Benoit Blanchon** | Si falla `ArduinoJson.h`, no está instalada. El código usa `DynamicJsonDocument` (API v6): instalá **versión 6.x** (p. ej. 6.21.5) desde el desplegable de versiones, o bien la última 7.x y cambiá en el `.ino` `DynamicJsonDocument doc(200)` por `JsonDocument doc`. |
+| **USB Host Shield** | *USB Host Shield Library 2.0* (p. ej. Circuits@Home) | Aporta `hiduniversal.h` y el stack USB host. |
+| **AbsMouse (ratón absoluto)** | *no hace falta el gestor* | Una copia mínima incluida en el repo (`arduino/TibiaPilotAbsMouse.h` / `.cpp`) sustituye la biblioteca [absmouse](https://github.com/jonathanedgecombe/absmouse) de Jonathan Edgecombe y evita conflictos con otros `HID.h`. Si instalaste *absmouse* por separado, podés desinstalarla para no duplicar lógica. |
+
+Sin **ArduinoJson** la compilación termina con: `fatal error: ArduinoJson.h: No such file or directory`.
+
+### Cargar el firmware
 
 1. Abrir Arduino IDE
 2. Abrir `arduino/arduino.ino`
 3. Seleccionar placa: **Arduino Leonardo**
 4. Seleccionar puerto: **COM33**
-5. Cargar el firmware
+5. **Verificar** y luego **Subir** el sketch
 
 > El bot manda comandos JSON al Arduino para simular mouse y teclado. Si el Arduino no está conectado o en COM33, las acciones de input no funcionarán.
 >
@@ -141,7 +192,7 @@ deviceinstaller64 enableidd 1
 
 El bot está hardcodeado para una configuración específica del cliente de Tibia:
 
-- Resolución: **1920×1080**
+- Resolución: **1280×720** o **1920×1080** (autodetectado por el bot)
 - Hotkeys: F1–F12 para spells (ver screenshots en `README.md`)
 - Action bar y HUD configurados según las capturas de pantalla del README
 - Gráficos y efectos en la configuración correcta
@@ -186,4 +237,4 @@ poetry run pyinstaller main.py
 |---|---|---|
 | Puerto Arduino | `src/utils/ino.py` | `COM33` |
 | Ruta Tesseract | `src/repositories/actionBar/core.py` | `C:\Program Files\Tesseract-OCR\tesseract.exe` |
-| Resolución | varios archivos | `1920x1080` |
+| Resolución | varios archivos | `720p/1080p` (autodetectado) |
