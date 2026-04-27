@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <ArduinoJson.h>
-#include <AbsMouse.h>
+#include "TibiaPilotAbsMouse.h"
 #include <hiduniversal.h>
 #include "hidmouserptparser.h"
 
@@ -95,8 +95,13 @@ void receiveEvent(uint8_t byteCount) {
 void setup() {
   Wire.begin(8);  // I2C Address
   Wire.onReceive(receiveEvent);
-  // Serial.begin(115200);
+  Serial.begin(115200);
   AbsMouse.init(1920, 1080);
+
+#if !TIBIAPILOT_ABS_MOUSE_SUPPORTED
+  Serial.println("WARNING: TibiaPilotAbsMouse needs a native-USB board (e.g. Leonardo/Micro).");
+  Serial.println("Mouse absolute output is disabled on this board.");
+#endif
 
   if (Usb.Init() == -1)
 		// Serial.println("OSC did not start.");
