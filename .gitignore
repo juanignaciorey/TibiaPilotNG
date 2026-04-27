@@ -27,3 +27,5 @@ var/
 .idea/
 .vscode/
 venv
+.venv
+.venv*/
