@@ -73,10 +73,41 @@ def setHandleLootMiddleware(context: Context) -> Context:
 
 # TODO: add unit tests
 def setGameWindowMiddleware(context: Context) -> Context:
-    context['gameWindow']['coordinate'] = getCoordinate(
-        context['ng_screenshot'], (gameWindowSizes[1080][0], gameWindowSizes[1080][1]))
+    screenshot = context['ng_screenshot']
+    screenshotHeight, screenshotWidth = screenshot.shape[:2]
+    currentResolution = context.get('ng_resolution', 1080)
+    candidateResolutions = [currentResolution, 1080, 720]
+
+    # Preserve order while removing duplicates.
+    candidateResolutions = list(dict.fromkeys(candidateResolutions))
+
+    selectedCoordinate = None
+    selectedResolution = None
+    selectedGameWindowSize = None
+    for candidateResolution in candidateResolutions:
+        candidateGameWindowSize = gameWindowSizes[candidateResolution]
+        candidateCoordinate = getCoordinate(
+            screenshot, (candidateGameWindowSize[0], candidateGameWindowSize[1]))
+        if candidateCoordinate is None:
+            continue
+        x, y, w, h = candidateCoordinate
+        if x < 0 or y < 0:
+            continue
+        if (x + w) > screenshotWidth or (y + h) > screenshotHeight:
+            continue
+        selectedCoordinate = candidateCoordinate
+        selectedResolution = candidateResolution
+        selectedGameWindowSize = candidateGameWindowSize
+        break
+
+    context['gameWindow']['coordinate'] = selectedCoordinate
+    if selectedCoordinate is None:
+        context['gameWindow']['image'] = None
+        return context
+
+    context['ng_resolution'] = selectedResolution
     context['gameWindow']['image'] = getImageByCoordinate(
-        context['ng_screenshot'], context['gameWindow']['coordinate'], (gameWindowSizes[1080][0], gameWindowSizes[1080][1]))
+        screenshot, selectedCoordinate, (selectedGameWindowSize[0], selectedGameWindowSize[1]))
     return context
 
 
